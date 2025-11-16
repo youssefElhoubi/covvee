@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com</groupId>
-    <artifactId>CovveeAPIGateway</artifactId>
+    <artifactId>APIGateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>CovveeAPIGateway</name>
-    <description>CovveeAPIGateway</description>
+    <name>APIGateway</name>
+    <description>APIGateway</description>
     <url/>
     <licenses>
         <license/>
@@ -46,8 +46,7 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-docker-compose</artifactId>
-            <scope>runtime</scope>
+            <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -85,6 +84,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                        </path>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
