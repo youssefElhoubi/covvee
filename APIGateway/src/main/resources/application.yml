@@ -2,6 +2,9 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: covveeApiGateway
+
   cloud:
     gateway:
       routes:
@@ -9,3 +12,8 @@ spring:
           uri: http://localhost:8081
           predicates:
             - Path=/auth/**
+
+        - id: project-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/project/**

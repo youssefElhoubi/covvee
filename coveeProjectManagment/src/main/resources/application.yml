@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: coveeProjectManagment
+  datasource:
+    url: jdbc:postgresql://localhost:3307/covvee
+    password: 123
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+server:
+  port: 8082
+
