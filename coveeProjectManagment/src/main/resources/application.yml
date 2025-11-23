@@ -1,6 +1,6 @@
 spring:
   application:
-    name: coveeProjectManagment
+    name: project-service
   datasource:
     url: jdbc:postgresql://localhost:3307/covvee
     password: 123
@@ -11,4 +11,9 @@ spring:
     show-sql: true
 server:
   port: 8082
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 
