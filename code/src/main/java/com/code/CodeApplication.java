@@ -2,8 +2,11 @@ package com.code;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+
 
 @SpringBootApplication
+@EnableEurekaClient
 public class CodeApplication {
 
     public static void main(String[] args) {
