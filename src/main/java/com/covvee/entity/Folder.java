@@ -8,14 +8,16 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Document
-public class File  {
+public class Folder  {
     @Id
-    private String id;
-    private String content;
-    private String language;
+    private String Id;
+    private List<Folder> children;
+    private List<File> files ;
 }
