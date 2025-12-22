@@ -33,7 +33,7 @@ public class Project {
     private User user;
     @DBRef
     private List<Folder> folders = new ArrayList<>();
-    private List<File> rootFiles;
+    private List<File> rootFiles = new ArrayList<>();
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
