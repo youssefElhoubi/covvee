@@ -1,4 +1,4 @@
-package com.covvee.dto.file.response;
+package com.covvee.dto.auth.response;
 
 import lombok.Builder;
 import lombok.Data;
