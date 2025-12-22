@@ -7,7 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -31,6 +33,9 @@ public class Project {
     private User user;
     @DBRef
     private List<Folder> folders = new ArrayList<>();
+    private List<File> rootFiles;
+    @CreatedDate
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAT;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 }
