@@ -6,8 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -15,9 +17,11 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Document
-public class Folder  {
+public class Folder {
     @Id
-    private String Id;
-    private List<Folder> children;
-    private List<File> files ;
+    private String id;
+    @DBRef
+    private List<Folder> children =  new ArrayList<>();
+    @DBRef
+    private List<File> files = new ArrayList<>();
 }

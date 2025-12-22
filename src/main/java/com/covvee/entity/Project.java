@@ -12,6 +12,8 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -27,6 +29,8 @@ public class Project {
     private Language language;
     @DBRef
     private User user;
+    @DBRef
+    private List<Folder> folders = new ArrayList<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAT;
 }
