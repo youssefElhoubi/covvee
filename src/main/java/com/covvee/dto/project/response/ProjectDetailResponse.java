@@ -1,6 +1,7 @@
 package com.covvee.dto.response;
 
 import com.covvee.dto.file.response.FileResponse;
+import com.covvee.dto.folder.response.FolderResponse;
 import com.covvee.enums.Language;
 import lombok.Builder;
 import lombok.Data;
