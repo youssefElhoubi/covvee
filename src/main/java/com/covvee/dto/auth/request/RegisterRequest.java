@@ -1,4 +1,4 @@
-package com.covvee.dto.auth;
+package com.covvee.dto.auth.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

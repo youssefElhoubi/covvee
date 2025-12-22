@@ -1,4 +1,4 @@
-package com.covvee.dto.project;
+package com.covvee.dto.project.request;
 
 import com.covvee.enums.Language;
 import com.covvee.enums.Visibility;

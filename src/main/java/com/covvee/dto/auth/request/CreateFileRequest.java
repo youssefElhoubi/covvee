@@ -1,4 +1,4 @@
-package com.covvee.dto.file.request;
+package com.covvee.dto.auth.request;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
