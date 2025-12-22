@@ -1,6 +1,6 @@
 package com.covvee.enums;
 
-public enum Project {
+public enum Visibility {
     PUBLIC,
     PRIVATE
 }
