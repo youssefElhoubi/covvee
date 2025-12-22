@@ -1,5 +1,6 @@
 package com.covvee.entity;
 
+import com.covvee.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class User {
     private String name;
     private String email;
     private String password;
-    private String role;
+    private Role role;
+    private String avatarUrl;
     private LocalDateTime createdAt;
 }
