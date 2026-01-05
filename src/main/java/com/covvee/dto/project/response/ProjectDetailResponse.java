@@ -1,4 +1,4 @@
-package com.covvee.dto.response;
+package com.covvee.dto.project.response;
 
 import com.covvee.dto.file.response.FileResponse;
 import com.covvee.dto.folder.response.FolderResponse;

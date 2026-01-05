@@ -3,14 +3,12 @@ package com.covvee.mapper;
 
 
 import com.covvee.dto.project.request.CreateProjectRequest;
+import com.covvee.dto.project.response.ProjectDetailResponse;
 import com.covvee.dto.project.response.ProjectSummaryResponse;
-import com.covvee.dto.response.ProjectDetailResponse;
 import com.covvee.entity.Project;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-
-import java.util.Collections;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class, FolderMapper.class, FileMapper.class})
 public interface ProjectMapper {
