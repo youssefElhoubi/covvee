@@ -9,6 +9,7 @@ import com.covvee.repository.ProjectRepository;
 import com.covvee.service.interfaces.ProjectServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,9 @@ public class ProjectService implements ProjectServiceInterface {
 
     @Override
     public ProjectDetailResponse getProject(String id) {
-        return null;
+        Project project = projectRepository.findById(id).orElseThrow(()-> {
+            throw new ResourceAccessException("Project not found");
+        });
+        return projectMapper.toDetail(project);
     }
 }
