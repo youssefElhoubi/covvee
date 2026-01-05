@@ -30,7 +30,7 @@ public class ProjectService implements ProjectServiceInterface {
 
     @Override
     public void deleteProject(String id) {
-
+        projectRepository.deleteById(id);
     }
 
     @Override
