@@ -62,4 +62,10 @@ public class ProjectService implements ProjectServiceInterface {
         List<Project> projects = projectRepository.findAll();
         return projects.stream().map(projectMapper::toDetail).toList();
     }
+
+    @Override
+    public List<ProjectDetailResponse> userProjects(User user) {
+        List<Project> projects = projectRepository.findByUser(user);
+        return projects.stream().map(projectMapper::toDetail).toList();
+    }
 }

@@ -14,5 +14,7 @@ public interface ProjectServiceInterface {
     void deleteProject(String id);
     ProjectDetailResponse getProject(String id);
     List<ProjectDetailResponse> allProjects();
+    List<ProjectDetailResponse> userProjects(User user);
+
 
 }
