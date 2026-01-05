@@ -14,9 +14,5 @@ public class UpdateProjectRequest{
     @Size(max = 255, message = "Description cannot exceed 255 characters")
     private String description;
 
-    @NotNull(message = "Visibility is required (PUBLIC or PRIVATE)")
     private Visibility visibility;
-
-    @NotNull(message = "Language is required (PYTHON, JAVA, JS)")
-    private Language language;
 }
