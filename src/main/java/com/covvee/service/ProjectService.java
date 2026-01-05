@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProjectService implements ProjectServiceInterface {
@@ -52,5 +55,11 @@ public class ProjectService implements ProjectServiceInterface {
             throw new ResourceAccessException("Project not found");
         });
         return projectMapper.toDetail(project);
+    }
+
+    @Override
+    public List<ProjectDetailResponse> allProjects() {
+        List<Project> projects = projectRepository.findAll();
+        return projects.stream().map(projectMapper::toDetail).toList();
     }
 }
