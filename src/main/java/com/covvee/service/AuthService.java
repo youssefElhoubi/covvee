@@ -51,6 +51,21 @@ public class AuthService implements AuthInterface {
         User user = userMapper.toEntity(authRequestDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        return userMapper.toAuthResponse(user);
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authRequestDto.getEmail(), authRequestDto.getPassword())
+        );
+
+        // 4. Update Security Context (Optional, but good practice)
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // 5. Generate Token
+        String token = jwtUtils.generateToken(authentication);
+
+        // 6. Return Response
+        AuthResponse response = userMapper.toAuthResponse(user);
+        response.setToken(token);
+
+        return response;
     }
 }

@@ -23,6 +23,8 @@ import java.util.List;
 public class Folder {
     @Id
     private String id;
+    private String parentId; // ID of the parent folder (null if root)
+    private String projectId;
     @DBRef
     private List<Folder> children =  new ArrayList<>();
     @DBRef

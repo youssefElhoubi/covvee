@@ -23,6 +23,10 @@ public class File  {
     private String  name;
     private String content;
     private String language;
+
+    private String parentId; // The ID of the Folder containing this file
+    private String projectId; // Good for fast bulk fetching
+
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
