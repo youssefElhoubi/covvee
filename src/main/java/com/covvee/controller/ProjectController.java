@@ -52,4 +52,12 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.allProjects());
     }
 
+    @GetMapping("/my-projects")
+    public ResponseEntity<List<ProjectDetailResponse>> getUserProjects(
+            @AuthenticationPrincipal AppUserDetails userDetails) {
+
+        List<ProjectDetailResponse> response = projectService.userProjects(userDetails.getUser());
+        return ResponseEntity.ok(response);
+    }
+
 }
