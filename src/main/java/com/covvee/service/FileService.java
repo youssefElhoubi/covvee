@@ -10,7 +10,9 @@ import com.covvee.repository.FileRepository;
 import com.covvee.service.interfaces.FileServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @Service
@@ -27,22 +29,28 @@ public class FileService implements FileServiceInterface {
 
     @Override
     public FileResponse getFileById(String fileId) {
-        return null;
+        File file = fileRepository.findById(fileId).orElseThrow(()-> new ResourceAccessException("File not found"));
+        return fileMapper.toResponse(file);
     }
 
     @Override
     public FileResponse updateFileContent(String fileId, UpdateFileDto content) {
-        return null;
+        File file = fileRepository.findById(fileId).orElseThrow(()-> new ResourceAccessException("File not found"));
+        file.setContent(content.getContent());
+        return fileMapper.toResponse(fileRepository.save(file));
     }
 
     @Override
     public FileResponse renameFile(String fileId, RenameFileDto newName) {
-        return null;
+        File file = fileRepository.findById(fileId).orElseThrow(()-> new ResourceAccessException("File not found"));
+        file.setName(newName.getNewName());
+        return fileMapper.toResponse(fileRepository.save(file));
     }
 
     @Override
     public void deleteFile(String fileId) {
-
+        File file = fileRepository.findById(fileId).orElseThrow(()-> new ResourceAccessException("File not found"));
+        fileRepository.delete(file);
     }
 
     @Override
