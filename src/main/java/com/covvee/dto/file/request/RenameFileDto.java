@@ -3,7 +3,9 @@ package com.covvee.dto.file.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
+@Data
 public class RenameFileDto {
     @NotBlank(message = "New name is required")
     @Size(max = 50, message = "File name cannot exceed 50 characters")
