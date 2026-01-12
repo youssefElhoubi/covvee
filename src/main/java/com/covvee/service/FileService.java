@@ -62,6 +62,7 @@ public class FileService implements FileServiceInterface {
 
     @Override
     public List<FileResponse> getAllFilesByProjectId(String projectId) {
-        return List.of();
+        List<File> files = fileRepository.findByProjectId(projectId);
+        return files.stream().map(fileMapper::toResponse).toList();
     }
 }
