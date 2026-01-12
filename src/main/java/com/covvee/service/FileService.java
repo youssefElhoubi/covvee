@@ -55,7 +55,9 @@ public class FileService implements FileServiceInterface {
 
     @Override
     public FileResponse moveFile(String fileId, String newParentFolderId) {
-        return null;
+        File file = fileRepository.findById(fileId).orElseThrow(()-> new ResourceAccessException("File not found"));
+        file.setParentId(newParentFolderId);
+        return fileMapper.toResponse(fileRepository.save(file));
     }
 
     @Override
