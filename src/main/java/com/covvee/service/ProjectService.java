@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 @Service
@@ -25,8 +25,8 @@ public class ProjectService implements ProjectServiceInterface {
     @Override
     public ProjectSummaryResponse createProject(CreateProjectRequest dto, User user) {
         Project project = projectMapper.toEntity(dto);
-        project =  projectRepository.save(project);
         project.setUser(user);
+        project =  projectRepository.save(project);
         return projectMapper.toSummary(project);
     }
 
@@ -40,8 +40,8 @@ public class ProjectService implements ProjectServiceInterface {
         project.setVisibility(dto.getVisibility());
         project.setName(dto.getName());
 
-        projectRepository.save(project);
-        return null;
+        project = projectRepository.save(project);
+        return projectMapper.toSummary(project);
     }
 
     @Override
