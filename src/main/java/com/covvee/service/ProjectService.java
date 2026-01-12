@@ -40,8 +40,8 @@ public class ProjectService implements ProjectServiceInterface {
         project.setVisibility(dto.getVisibility());
         project.setName(dto.getName());
 
-        projectRepository.save(project);
-        return null;
+        project = projectRepository.save(project);
+        return projectMapper.toSummary(project);
     }
 
     @Override

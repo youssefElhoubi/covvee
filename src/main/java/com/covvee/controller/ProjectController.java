@@ -1,6 +1,7 @@
 package com.covvee.controller;
 
 import com.covvee.dto.project.request.CreateProjectRequest;
+import com.covvee.dto.project.request.UpdateProjectRequest;
 import com.covvee.dto.project.response.ProjectSummaryResponse;
 import com.covvee.security.AppUserDetails;
 import com.covvee.service.ProjectService;
@@ -8,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,6 +23,15 @@ public class ProjectController {
 
         ProjectSummaryResponse response = projectService.createProject(request, userDetails.getUser());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProjectSummaryResponse> updateProject(
+            @PathVariable String id,
+            @RequestBody UpdateProjectRequest request) {
+
+        ProjectSummaryResponse response = projectService.updateProject(request, id);
+        return ResponseEntity.ok(response);
     }
 
 }
