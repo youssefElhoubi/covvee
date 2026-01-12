@@ -2,6 +2,7 @@ package com.covvee.controller;
 
 import com.covvee.dto.project.request.CreateProjectRequest;
 import com.covvee.dto.project.request.UpdateProjectRequest;
+import com.covvee.dto.project.response.ProjectDetailResponse;
 import com.covvee.dto.project.response.ProjectSummaryResponse;
 import com.covvee.security.AppUserDetails;
 import com.covvee.service.ProjectService;
@@ -32,6 +33,11 @@ public class ProjectController {
 
         ProjectSummaryResponse response = projectService.updateProject(request, id);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProjectDetailResponse> getProject(@PathVariable String id) {
+        return ResponseEntity.ok(projectService.getProject(id));
     }
 
 }
