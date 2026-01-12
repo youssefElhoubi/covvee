@@ -25,8 +25,8 @@ public class ProjectService implements ProjectServiceInterface {
     @Override
     public ProjectSummaryResponse createProject(CreateProjectRequest dto, User user) {
         Project project = projectMapper.toEntity(dto);
-        project =  projectRepository.save(project);
         project.setUser(user);
+        project =  projectRepository.save(project);
         return projectMapper.toSummary(project);
     }
 
