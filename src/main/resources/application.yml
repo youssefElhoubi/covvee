@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: covvee
+  http:
+    encoding:
+      - charset: utf-8
+      - enabled: true
+      - force: true
+  mongodb:
+    port: 27017
+server:
+  port: 8080
+app:
+  jwtSecret: ${APP_JWT_SECRET:sqbddsjvqfhjskhlfdskjlhfdlskqgfsldbfhkdskflhsdhklfsqdhkfgqhsdklfhk}
+  jwtExpirationMs: ${APP_JWT_EXPIRATION_MS:86400000}
