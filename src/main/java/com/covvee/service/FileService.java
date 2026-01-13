@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -36,7 +38,9 @@ public class FileService implements FileServiceInterface {
     @Override
     public FileResponse updateFileContent(String fileId, UpdateFileDto content) {
         File file = fileRepository.findById(fileId).orElseThrow(()-> new ResourceAccessException("File not found"));
-        file.setContent(content.getContent());
+        byte[] decodeBytes = Base64.getDecoder().decode(content.getContent());
+        String decodeContent = new String(decodeBytes, StandardCharsets.UTF_8);
+        file.setContent(decodeContent);
         return fileMapper.toResponse(fileRepository.save(file));
     }
 
