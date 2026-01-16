@@ -7,6 +7,7 @@ import com.covvee.execption.ResourceNotFoundException;
 import com.covvee.mapper.FolderMapper;
 import com.covvee.repository.FolderRepository;
 import com.covvee.service.interfaces.folder.FolderInterface;
+import com.covvee.utils.FolderUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,8 @@ import java.util.stream.Collectors;
 public class FolderService implements FolderInterface {
     private final FolderRepository folderRepository;
     private final FolderMapper folderMapper;
+    private final FolderUtils folderUtils;
+
     @Override
     public FolderResponse createFolder(CreateFolderRequest request) {
         Folder folder = folderMapper.toEntity(request);
@@ -83,7 +86,7 @@ public class FolderService implements FolderInterface {
         // Note: You must also handle removing it from the old parent's 'children' list
         // if you are maintaining that list manually.
 
-        folderToMove.setParentId(newParentId);
+        folderToMove.setParentId(newParent.getId());
         Folder savedFolder = folderRepository.save(folderToMove);
 
         return folderMapper.toResponse(savedFolder);
@@ -93,10 +96,7 @@ public class FolderService implements FolderInterface {
     public void deleteFolder(String folderId) {
         Folder folder = folderRepository.findById(folderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
-        if (folder.getParentId() == null) {
-            folderRepository.delete(folder);
-            return;
-        }
+        folderUtils.childrenSafeRemove(List.of(folder));
 
     }
 
