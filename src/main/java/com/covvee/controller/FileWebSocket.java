@@ -43,5 +43,10 @@ public class FileWebSocket {
         fileService.deleteFile(id);
         return ResponseEntity.ok().build();
     }
+    @MessageMapping()
+    @SendTo("topic/move/{id}")
+    public ResponseEntity<FileResponse> moveFile(@PathVariable String id, @RequestBody String newParentFolderId ){
+        return ResponseEntity.ok(fileService.moveFile(id,newParentFolderId));
+    }
 
 }
