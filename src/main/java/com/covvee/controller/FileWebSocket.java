@@ -37,4 +37,11 @@ public class FileWebSocket {
     public ResponseEntity<FileResponse> renameFile(@PathVariable String id,@RequestBody RenameFileDto content){
         return ResponseEntity.ok(fileService.renameFile(id, content));
     }
+    @MessageMapping()
+    @SendTo("topic/delete/{id}")
+    public ResponseEntity<?> deleteFile(@PathVariable String id){
+        fileService.deleteFile(id);
+        return ResponseEntity.ok().build();
+    }
+
 }
