@@ -1,0 +1,34 @@
+package com.covvee.controller;
+
+import com.covvee.dto.file.request.UpdateFileDto;
+import com.covvee.dto.file.response.FileResponse;
+import com.covvee.service.FileService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequiredArgsConstructor
+@RequestMapping("file")
+public class FileWebSocket {
+    private final FileService fileService;
+    private final SimpMessagingTemplate messagingTemplate;
+
+    @MessageMapping()
+    @SendTo("topic/data/{id}")
+    public ResponseEntity<FileResponse> updateContent(@PathVariable String id, @RequestBody UpdateFileDto content){
+        return ResponseEntity.ok(fileService.updateFileContent(id, content));
+    }
+
+    @MessageMapping()
+    @SendTo("topic/file/{id}")
+    public ResponseEntity<FileResponse> RequestFile(@PathVariable String id){
+        return ResponseEntity.ok(fileService.getFileById(id));
+    }
+}
