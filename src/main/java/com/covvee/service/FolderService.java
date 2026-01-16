@@ -21,6 +21,11 @@ public class FolderService implements FolderInterface {
     public FolderResponse createFolder(CreateFolderRequest request) {
         Folder folder = folderMapper.toEntity(request);
         folder = folderRepository.save(folder);
+        if (request.getParentFolderId() != null) {
+            Folder parent = folderRepository.findById(folder.getParentId()).orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
+            parent.getChildren().add(folder);
+            folderRepository.save(parent);
+        }
         return folderMapper.toResponse(folder);
     }
 
