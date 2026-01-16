@@ -26,17 +26,15 @@ public class FolderService implements FolderInterface {
 
     @Override
     public FolderResponse getFolderById(String folderId) {
-        Folder folder = folderRepository.findById(folderId).orElseThrow(()-> {
-            throw new ResourceNotFoundException("folder was not found");
-        });
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
         return folderMapper.toResponse(folder);
     }
 
     @Override
     public FolderResponse renameFolder(String folderId, String newName) {
-        Folder folder = folderRepository.findById(folderId).orElseThrow(()-> {
-            throw new ResourceNotFoundException("folder was not found");
-        });
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
         folder.setName(newName);
         folder = folderRepository.save(folder);
         return folderMapper.toResponse(folder);
@@ -44,6 +42,13 @@ public class FolderService implements FolderInterface {
 
     @Override
     public FolderResponse moveFolder(String folderId, String newParentId) {
+        Folder folderToMove = folderRepository.findById(folderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
+
+        // 2. Fetch the destination parent
+        Folder newParent = folderRepository.findById(newParentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Destination folder not found"));
+//        check if the new parent folder was a child folder then move
         return null;
     }
 
