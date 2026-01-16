@@ -51,8 +51,8 @@ public class FileWebSocket {
         return ResponseEntity.ok(fileService.moveFile(id,newParentFolderId));
     }
     @MessageMapping()
-    @SendTo("topic/move/{id}")
-    public ResponseEntity<List<FileResponse>> Files(@PathVariable String id ){
+    @SendTo("topic/project/files/{id}")
+    public ResponseEntity<List<FileResponse>> files(@PathVariable String id ){
         return ResponseEntity.ok(fileService.getAllFilesByProjectId(id));
     }
 
