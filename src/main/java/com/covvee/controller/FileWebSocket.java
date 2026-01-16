@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("file")
@@ -48,5 +50,11 @@ public class FileWebSocket {
     public ResponseEntity<FileResponse> moveFile(@PathVariable String id, @RequestBody String newParentFolderId ){
         return ResponseEntity.ok(fileService.moveFile(id,newParentFolderId));
     }
+    @MessageMapping()
+    @SendTo("topic/move/{id}")
+    public ResponseEntity<List<FileResponse>> Files(@PathVariable String id ){
+        return ResponseEntity.ok(fileService.getAllFilesByProjectId(id));
+    }
+
 
 }
