@@ -91,6 +91,12 @@ public class FolderService implements FolderInterface {
 
     @Override
     public void deleteFolder(String folderId) {
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
+        if (folder.getParentId() == null) {
+            folderRepository.delete(folder);
+            return;
+        }
 
     }
 
