@@ -5,8 +5,10 @@ import com.covvee.dto.file.request.RenameFileDto;
 import com.covvee.dto.file.request.UpdateFileDto;
 import com.covvee.dto.file.response.FileResponse;
 import com.covvee.entity.File;
+import com.covvee.entity.Folder;
 import com.covvee.mapper.FileMapper;
 import com.covvee.repository.FileRepository;
+import com.covvee.repository.FolderRepository;
 import com.covvee.service.interfaces.FileServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,11 +24,17 @@ import java.util.List;
 public class FileService implements FileServiceInterface {
     private final FileRepository fileRepository;
     private final FileMapper fileMapper;
+    private final FolderRepository folderRepository;
 
 //    rest
     @Override
     public FileResponse createFile(CreateFileRequest request) {
-        File file = fileMapper.toEntity(request) ;
+        File file = fileMapper.toEntity(request);
+        Folder parentFolder = folderRepository.findById(request.getParentFolderId()).orElseThrow(()-> new ResourceAccessException("Folder not found"));
+        List<File> files = parentFolder.getFiles();
+        files.add(file);
+        parentFolder.setFiles(files);
+        folderRepository.save(parentFolder);
         return fileMapper.toResponse(fileRepository.save(file));
     }
 
