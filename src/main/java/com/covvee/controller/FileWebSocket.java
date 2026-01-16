@@ -1,5 +1,6 @@
 package com.covvee.controller;
 
+import com.covvee.dto.file.request.RenameFileDto;
 import com.covvee.dto.file.request.UpdateFileDto;
 import com.covvee.dto.file.response.FileResponse;
 import com.covvee.service.FileService;
@@ -28,7 +29,12 @@ public class FileWebSocket {
 
     @MessageMapping()
     @SendTo("topic/file/{id}")
-    public ResponseEntity<FileResponse> RequestFile(@PathVariable String id){
+    public ResponseEntity<FileResponse> requestFile(@PathVariable String id){
         return ResponseEntity.ok(fileService.getFileById(id));
+    }
+    @MessageMapping()
+    @SendTo("topic/rename/{id}")
+    public ResponseEntity<FileResponse> renameFile(@PathVariable String id,@RequestBody RenameFileDto content){
+        return ResponseEntity.ok(fileService.renameFile(id, content));
     }
 }
