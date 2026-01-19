@@ -29,4 +29,9 @@ public class FolderWebSocket {
     public ResponseEntity<FolderResponse> getFolderById(@PathVariable String id){
         return ResponseEntity.ok(folderService.getFolderById(id));
     }
+    @MessageMapping()
+    @SendTo("topic/folder/rename/{id}")
+    public ResponseEntity<FolderResponse> renameFolder(@PathVariable String id, @Payload String name){
+        return ResponseEntity.ok(folderService.renameFolder(id, name));
+    }
 }
