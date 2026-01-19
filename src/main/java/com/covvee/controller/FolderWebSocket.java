@@ -39,4 +39,10 @@ public class FolderWebSocket {
     public ResponseEntity<FolderResponse> moveFolder(@PathVariable String id, @Payload String name){
         return ResponseEntity.ok(folderService.moveFolder(id, name));
     }
+    @MessageMapping()
+    @SendTo("topic/folder/delete/{id}")
+    public ResponseEntity<String> deleteFolder(@PathVariable String id){
+        folderService.deleteFolder(id);
+        return ResponseEntity.ok("Folder deleted");
+    }
 }
