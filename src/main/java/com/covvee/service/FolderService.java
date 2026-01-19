@@ -102,6 +102,7 @@ public class FolderService implements FolderInterface {
 
     @Override
     public List<FolderResponse> getAllFoldersByProjectId(String projectId) {
-        return List.of();
+        List<Folder> folders = folderRepository.findByProjectId(projectId);
+        return folders.stream().map(folderMapper::toResponse).toList();
     }
 }
