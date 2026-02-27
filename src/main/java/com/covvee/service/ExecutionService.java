@@ -6,10 +6,10 @@ import com.covvee.repository.ProjectRepository;
 import com.covvee.service.interfaces.ExecutionInterface;
 import com.covvee.utils.ProjectMaterializer;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -21,11 +21,12 @@ public class ExecutionService implements ExecutionInterface {
     private final DockerService dockerService;
     private final ProjectRepository projectRepository;
 
+    @SneakyThrows
     @Override
     public ExecutionResult runProject(String projectId) {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceAccessException("project was not found "));
         Path tempDir = null;
-        try {
+
             // 1. Create a temp folder
             tempDir = Files.createTempDirectory("covvee_run_" + projectId + "_");
 
@@ -35,14 +36,9 @@ public class ExecutionService implements ExecutionInterface {
             // 3. Now 'tempDir' is a perfect copy of the project.
             // You can mount it to Docker!
             dockerService.execute(tempDir, project.getLanguage());
-            // return runDockerContainer(tempDir, ...);
 
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to prepare workspace", e);
-        } finally {
             // 4. CLEANUP (Crucial!)
-            // deleteDirectory(tempDir);
-        }
+            // deleteDirectory(tempDir
         return null;
     }
 
