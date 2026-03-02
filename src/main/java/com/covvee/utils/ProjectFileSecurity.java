@@ -1,9 +1,11 @@
 package com.covvee.utils;
 
 import com.covvee.entity.File;
+import com.covvee.entity.Folder;
 import com.covvee.entity.User;
 import com.covvee.execption.ResourceNotFoundException;
 import com.covvee.repository.FileRepository;
+import com.covvee.repository.FolderRepository;
 import com.covvee.repository.ProjectRepository;
 import com.covvee.security.AppUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 public class ProjectFileSecurity {
     private final ProjectRepository projectRepository;
     private final FileRepository fileRepository;
+    private final FolderRepository folderRepository;
 
     public boolean ownProject(String projectId, AppUserDetails authentication) {
         User user = authentication.getUser();
@@ -24,5 +27,11 @@ public class ProjectFileSecurity {
         File file = fileRepository.findById(fileId).orElseThrow(()->new ResourceNotFoundException("file not found"));
 
         return projectRepository.findByIdAndUser(file.getProjectId(), user);
+    }
+    public boolean ownFolder(String fileId, AppUserDetails authentication) {
+        User user = authentication.getUser();
+        Folder folder = folderRepository.findById(fileId).orElseThrow(()->new ResourceNotFoundException("file not found"));
+
+        return projectRepository.findByIdAndUser(folder.getProjectId(), user);
     }
 }

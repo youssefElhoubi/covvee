@@ -2,9 +2,12 @@ package com.covvee.controller;
 
 import com.covvee.dto.folder.request.CreateFolderRequest;
 import com.covvee.dto.folder.response.FolderResponse;
+import com.covvee.security.AppUserDetails;
 import com.covvee.service.FolderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController // changed from @Controller to indicate REST API
@@ -32,21 +35,24 @@ public class FolderController { // Renamed class
     // PUT /folders/{id}/rename
     // Note: Accepts the new name as the Request Body
     @PutMapping("/{id}/rename")
-    public ResponseEntity<FolderResponse> renameFolder(@PathVariable String id, @RequestBody String name) {
+    @PreAuthorize("@projectFileSecurity.ownFolder(#id,userDetails)")
+    public ResponseEntity<FolderResponse> renameFolder(@PathVariable String id, @RequestBody String name, @AuthenticationPrincipal AppUserDetails userDetails) {
         return ResponseEntity.ok(folderService.renameFolder(id, name));
     }
 
     // Move a folder
     // PUT /folders/{id}/move
     @PutMapping("/{id}/move")
-    public ResponseEntity<FolderResponse> moveFolder(@PathVariable String id, @RequestBody String destination) {
+    @PreAuthorize("@projectFileSecurity.ownFolder(#id,userDetails)")
+    public ResponseEntity<FolderResponse> moveFolder(@PathVariable String id, @RequestBody String destination, @AuthenticationPrincipal AppUserDetails userDetails) {
         return ResponseEntity.ok(folderService.moveFolder(id, destination));
     }
 
     // Delete a folder
     // DELETE /folders/{id}
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteFolder(@PathVariable String id) {
+    @PreAuthorize("@projectFileSecurity.ownFolder(#id,userDetails)")
+    public ResponseEntity<String> deleteFolder(@PathVariable String id, @AuthenticationPrincipal AppUserDetails userDetails) {
         folderService.deleteFolder(id);
         return ResponseEntity.ok("Folder deleted");
     }
