@@ -32,11 +32,12 @@ public class SecurityConfig {
                     corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfig.setAllowedHeaders(java.util.List.of("*"));
                     return corsConfig;
-                })).authorizeHttpRequests((auth) ->{
-                    auth.requestMatchers("/api/auth/**").permitAll()
-                            .requestMatchers("/api/warehouse/**").hasRole("ADMIN")
-                            .anyRequest().authenticated();
-                })
+                })).authorizeHttpRequests((auth) -> auth.requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/file/**").hasRole("USER")
+                        .requestMatchers("/api/folders/**").hasRole("USER")
+                        .requestMatchers("/api/folder/**").hasRole("USER")
+                        .requestMatchers("/api/project/**").hasRole("USER")
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

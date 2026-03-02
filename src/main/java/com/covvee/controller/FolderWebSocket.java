@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("Folder")
+@RequestMapping("folder")
 public class FolderWebSocket {
     private final FolderService folderService;
 
