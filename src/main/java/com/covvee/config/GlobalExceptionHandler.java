@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +46,18 @@ public class GlobalExceptionHandler {
                 buildErrorResponse(
                         HttpStatus.UNPROCESSABLE_ENTITY, // 422 Status
                         "Business Rule Violation",
+                        ex.getMessage(),
+                        request.getRequestURI()
+                ),
+                HttpStatus.UNPROCESSABLE_ENTITY // 422
+        );
+    }
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<ErrorResponseDTO> ioException(IOException ex, HttpServletRequest request) {
+        return new ResponseEntity<>(
+                buildErrorResponse(
+                        HttpStatus.UNPROCESSABLE_ENTITY, // 422 Status
+                        "IOException",
                         ex.getMessage(),
                         request.getRequestURI()
                 ),
