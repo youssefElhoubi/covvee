@@ -1,15 +1,17 @@
 spring:
   application:
     name: covvee
-  http:
-    encoding:
-      - charset: utf-8
-      - enabled: true
-      - force: true
   mongodb:
-    port: 27017
+    uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/covvee}
+
 server:
   port: 8080
+  servlet:
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
+
 app:
   jwtSecret: ${APP_JWT_SECRET:sqbddsjvqfhjskhlfdskjlhfdlskqgfsldbfhkdskflhsdhklfsqdhkfgqhsdklfhk}
   jwtExpirationMs: ${APP_JWT_EXPIRATION_MS:86400000}

@@ -35,6 +35,7 @@ public class SecurityConfig {
                     corsConfig.setAllowedHeaders(java.util.List.of("*"));
                     return corsConfig;
                 })).authorizeHttpRequests((auth) -> auth.requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/file/**").hasRole("USER")
                         .requestMatchers("/api/folders/**").hasRole("USER")
                         .requestMatchers("/api/folder/**").hasRole("USER")
