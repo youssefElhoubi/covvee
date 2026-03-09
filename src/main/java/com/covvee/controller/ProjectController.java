@@ -9,6 +9,7 @@ import com.covvee.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,9 +30,12 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@projectFileSecurity.ownProject(#id,userDetails)")
     public ResponseEntity<ProjectSummaryResponse> updateProject(
             @PathVariable String id,
-            @RequestBody UpdateProjectRequest request) {
+            @RequestBody UpdateProjectRequest request,
+            @AuthenticationPrincipal AppUserDetails userDetails
+    ) {
 
         ProjectSummaryResponse response = projectService.updateProject(request, id);
         return ResponseEntity.ok(response);
@@ -43,7 +47,8 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable String id) {
+    @PreAuthorize("@projectFileSecurity.ownProject(#id,userDetails)")
+    public ResponseEntity<Void> deleteProject(@PathVariable String id, @AuthenticationPrincipal AppUserDetails userDetails) {
         projectService.deleteProject(id);
         return ResponseEntity.noContent().build();
     }

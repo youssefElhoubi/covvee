@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface ProjectRepository extends MongoRepository<Project,String> {
     List<Project> findByUser(User user);
+    boolean findByIdAndUser(String id, User user);
 }
