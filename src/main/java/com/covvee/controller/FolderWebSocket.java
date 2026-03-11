@@ -4,6 +4,7 @@ import com.covvee.dto.folder.request.CreateFolderRequest;
 import com.covvee.dto.folder.response.FolderResponse;
 import com.covvee.security.AppUserDetails;
 import com.covvee.service.FolderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -23,7 +24,7 @@ public class FolderWebSocket {
 
     @MessageMapping()
     @SendTo("topic/folder")
-    public ResponseEntity<FolderResponse> createFolder(@Payload CreateFolderRequest request){
+    public ResponseEntity<FolderResponse> createFolder(@Valid @Payload CreateFolderRequest request){
         return ResponseEntity.ok(folderService.createFolder(request));
     }
 

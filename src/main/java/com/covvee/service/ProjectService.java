@@ -11,6 +11,7 @@ import com.covvee.repository.ProjectRepository;
 import com.covvee.service.interfaces.ProjectServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.ResourceAccessException;
 
 
@@ -21,12 +22,17 @@ import java.util.List;
 public class ProjectService implements ProjectServiceInterface {
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
+    private final ProjectStructureFactory structureFactory;
 
     @Override
+    @Transactional
     public ProjectSummaryResponse createProject(CreateProjectRequest dto, User user) {
         Project project = projectMapper.toEntity(dto);
         project.setUser(user);
-        project =  projectRepository.save(project);
+        project = projectRepository.save(project);
+        structureFactory.initializeStructure(project);
+        project = projectRepository.save(project);
+
         return projectMapper.toSummary(project);
     }
 

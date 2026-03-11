@@ -5,6 +5,7 @@ import com.covvee.dto.file.request.UpdateFileDto;
 import com.covvee.dto.file.response.FileResponse;
 import com.covvee.security.AppUserDetails;
 import com.covvee.service.FileService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -29,7 +30,7 @@ public class FileWebSocket {
     @MessageMapping()
     @SendTo("topic/data/{id}")
     @PreAuthorize("@projectFileSecurity.ownFile(#id,userDetails)")
-    public ResponseEntity<FileResponse> updateContent(@PathVariable String id, @RequestBody UpdateFileDto content, @AuthenticationPrincipal AppUserDetails userDetails) {
+    public ResponseEntity<FileResponse> updateContent(@PathVariable String id, @Valid @RequestBody UpdateFileDto content, @AuthenticationPrincipal AppUserDetails userDetails) {
         return ResponseEntity.ok(fileService.updateFileContent(id, content));
     }
 
@@ -42,14 +43,14 @@ public class FileWebSocket {
     @MessageMapping()
     @SendTo("topic/rename/{id}")
     @PreAuthorize("@projectFileSecurity.ownFile(#id,userDetails)")
-    public ResponseEntity<FileResponse> renameFile(@PathVariable String id, @RequestBody RenameFileDto content, @AuthenticationPrincipal AppUserDetails userDetails) {
+    public ResponseEntity<FileResponse> renameFile(@PathVariable String id,@Valid @RequestBody RenameFileDto content, @AuthenticationPrincipal AppUserDetails userDetails) {
         return ResponseEntity.ok(fileService.renameFile(id, content));
     }
 
     @MessageMapping()
     @SendTo("topic/delete/{id}")
     @PreAuthorize("@projectFileSecurity.ownFile(#id,userDetails)")
-    public ResponseEntity<?> deleteFile(@PathVariable String id, @RequestBody RenameFileDto content, @AuthenticationPrincipal AppUserDetails userDetails) {
+    public ResponseEntity<?> deleteFile(@PathVariable String id, @AuthenticationPrincipal AppUserDetails userDetails) {
         fileService.deleteFile(id);
         return ResponseEntity.ok().build();
     }

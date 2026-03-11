@@ -6,6 +6,7 @@ import com.covvee.dto.project.response.ProjectDetailResponse;
 import com.covvee.dto.project.response.ProjectSummaryResponse;
 import com.covvee.security.AppUserDetails;
 import com.covvee.service.ProjectService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class ProjectController {
     private final ProjectService projectService;
     @PostMapping
     public ResponseEntity<ProjectSummaryResponse> createProject(
-            @RequestBody CreateProjectRequest request,
+            @Valid @RequestBody CreateProjectRequest request,
             @AuthenticationPrincipal AppUserDetails userDetails) {
 
         ProjectSummaryResponse response = projectService.createProject(request, userDetails.getUser());
@@ -33,7 +34,7 @@ public class ProjectController {
     @PreAuthorize("@projectFileSecurity.ownProject(#id,userDetails)")
     public ResponseEntity<ProjectSummaryResponse> updateProject(
             @PathVariable String id,
-            @RequestBody UpdateProjectRequest request,
+            @Valid @RequestBody UpdateProjectRequest request,
             @AuthenticationPrincipal AppUserDetails userDetails
     ) {
 
