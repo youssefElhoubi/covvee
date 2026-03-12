@@ -6,50 +6,60 @@ import com.covvee.security.AppUserDetails;
 import com.covvee.service.FolderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("folder")
 public class FolderWebSocket {
+
     private final FolderService folderService;
 
-    @MessageMapping()
-    @SendTo("topic/folder")
-    public ResponseEntity<FolderResponse> createFolder(@Valid @Payload CreateFolderRequest request){
-        return ResponseEntity.ok(folderService.createFolder(request));
+    @MessageMapping("/folders.create")
+    @SendTo("/topic/folders/new")
+    public FolderResponse createFolder(@Valid @Payload CreateFolderRequest request) {
+        return folderService.createFolder(request);
     }
 
-    @MessageMapping()
-    @SendTo("topic/folder/{id}")
-    public ResponseEntity<FolderResponse> getFolderById(@PathVariable String id){
-        return ResponseEntity.ok(folderService.getFolderById(id));
+
+    @MessageMapping("/folders.get.{id}")
+    @SendTo("/topic/folders/{id}")
+    public FolderResponse getFolderById(@DestinationVariable String id) {
+        return folderService.getFolderById(id);
     }
-    @MessageMapping()
-    @SendTo("topic/folder/rename/{id}")
+
+    @MessageMapping("/folders.rename.{id}")
+    @SendTo("/topic/folders/{id}")
     @PreAuthorize("@projectFileSecurity.ownFolder(#id,userDetails)")
-    public ResponseEntity<FolderResponse> renameFolder(@PathVariable String id, @Payload String name, @AuthenticationPrincipal AppUserDetails userDetails){
-        return ResponseEntity.ok(folderService.renameFolder(id, name));
+    public FolderResponse renameFolder(
+            @DestinationVariable String id,
+            @Payload String name,
+            @AuthenticationPrincipal AppUserDetails userDetails) {
+        return folderService.renameFolder(id, name);
     }
-    @MessageMapping()
-    @SendTo("topic/folder/move/{id}")
+
+    @MessageMapping("/folders.move.{id}")
+    @SendTo("/topic/folders/{id}")
     @PreAuthorize("@projectFileSecurity.ownFolder(#id,userDetails)")
-    public ResponseEntity<FolderResponse> moveFolder(@PathVariable String id, @Payload String name, @AuthenticationPrincipal AppUserDetails userDetails){
-        return ResponseEntity.ok(folderService.moveFolder(id, name));
+    public FolderResponse moveFolder(
+            @DestinationVariable String id,
+            @Payload String destination,
+            @AuthenticationPrincipal AppUserDetails userDetails) {
+        return folderService.moveFolder(id, destination);
     }
-    @MessageMapping()
-    @SendTo("topic/folder/delete/{id}")
+
+    @MessageMapping("/folders.delete.{id}")
+    @SendTo("/topic/folders/deleted")
     @PreAuthorize("@projectFileSecurity.ownFolder(#id,userDetails)")
-    public ResponseEntity<String> deleteFolder(@PathVariable String id, @AuthenticationPrincipal AppUserDetails userDetails){
+    public String deleteFolder(
+            @DestinationVariable String id,
+            @AuthenticationPrincipal AppUserDetails userDetails) {
         folderService.deleteFolder(id);
-        return ResponseEntity.ok("Folder deleted");
+        return id;
     }
 }
