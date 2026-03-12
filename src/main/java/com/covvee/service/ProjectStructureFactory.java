@@ -35,6 +35,7 @@ public class ProjectStructureFactory {
                 .language("json")
                 .projectId(project.getId())
                 .build();
+
         project.getRootFiles().add(fileRepository.save(packageJson));
 
         // 2. Create 'src' folder
