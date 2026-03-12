@@ -7,66 +7,74 @@ import com.covvee.security.AppUserDetails;
 import com.covvee.service.FileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("file")
+@MessageMapping("file")
 public class FileWebSocket {
+
     private final FileService fileService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @MessageMapping()
-    @SendTo("topic/data/{id}")
+    @MessageMapping("/update/{id}")
+    @SendTo("/topic/data/{id}")
     @PreAuthorize("@projectFileSecurity.ownFile(#id,userDetails)")
-    public ResponseEntity<FileResponse> updateContent(@PathVariable String id, @Valid @RequestBody UpdateFileDto content, @AuthenticationPrincipal AppUserDetails userDetails) {
-        return ResponseEntity.ok(fileService.updateFileContent(id, content));
+    public FileResponse updateContent(
+            @DestinationVariable String id,
+            @Valid @Payload UpdateFileDto content,
+            @AuthenticationPrincipal AppUserDetails userDetails) {
+        return fileService.updateFileContent(id, content);
     }
 
-    @MessageMapping()
-    @SendTo("topic/file/{id}")
-    public ResponseEntity<FileResponse> requestFile(@PathVariable String id) {
-        return ResponseEntity.ok(fileService.getFileById(id));
+    @MessageMapping("/request/{id}")
+    @SendTo("/topic/file/{id}")
+    public FileResponse requestFile(@DestinationVariable String id) {
+        return fileService.getFileById(id);
     }
 
-    @MessageMapping()
-    @SendTo("topic/rename/{id}")
+    @MessageMapping("/rename/{id}")
+    @SendTo("/topic/rename/{id}")
     @PreAuthorize("@projectFileSecurity.ownFile(#id,userDetails)")
-    public ResponseEntity<FileResponse> renameFile(@PathVariable String id,@Valid @RequestBody RenameFileDto content, @AuthenticationPrincipal AppUserDetails userDetails) {
-        return ResponseEntity.ok(fileService.renameFile(id, content));
+    public FileResponse renameFile(
+            @DestinationVariable String id,
+            @Valid @Payload RenameFileDto content,
+            @AuthenticationPrincipal AppUserDetails userDetails) {
+        return fileService.renameFile(id, content);
     }
 
-    @MessageMapping()
-    @SendTo("topic/delete/{id}")
+    @MessageMapping("/delete/{id}")
+    @SendTo("/topic/delete/{id}")
     @PreAuthorize("@projectFileSecurity.ownFile(#id,userDetails)")
-    public ResponseEntity<?> deleteFile(@PathVariable String id, @AuthenticationPrincipal AppUserDetails userDetails) {
+    public String deleteFile(
+            @DestinationVariable String id,
+            @AuthenticationPrincipal AppUserDetails userDetails) {
         fileService.deleteFile(id);
-        return ResponseEntity.ok().build();
+        return id; // Returned the ID so your React frontend knows which file to remove from the UI
     }
 
-    @MessageMapping()
-    @SendTo("topic/move/{id}")
+    @MessageMapping("/move/{id}")
+    @SendTo("/topic/move/{id}")
     @PreAuthorize("@projectFileSecurity.ownFile(#id,userDetails)")
-    public ResponseEntity<FileResponse> moveFile(@PathVariable String id, @RequestBody String newParentFolderId , @AuthenticationPrincipal AppUserDetails userDetails) {
-        return ResponseEntity.ok(fileService.moveFile(id, newParentFolderId));
+    public FileResponse moveFile(
+            @DestinationVariable String id,
+            @Payload String newParentFolderId,
+            @AuthenticationPrincipal AppUserDetails userDetails) {
+        return fileService.moveFile(id, newParentFolderId);
     }
 
-    @MessageMapping()
-    @SendTo("topic/project/files/{id}")
-    public ResponseEntity<List<FileResponse>> files(@PathVariable String id) {
-        return ResponseEntity.ok(fileService.getAllFilesByProjectId(id));
+    @MessageMapping("/project/files/{id}")
+    @SendTo("/topic/project/files/{id}")
+    public List<FileResponse> files(@DestinationVariable String id) {
+        return fileService.getAllFilesByProjectId(id);
     }
-
-
 }
