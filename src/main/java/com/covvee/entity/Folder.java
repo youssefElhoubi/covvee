@@ -26,8 +26,10 @@ public class Folder {
     private String parentId; // ID of the parent folder (null if root)
     private String projectId;
     @DBRef
+    @Builder.Default
     private List<Folder> children =  new ArrayList<>();
     @DBRef
+    @Builder.Default
     private List<File> files = new ArrayList<>();
     private String name;
     @CreatedDate

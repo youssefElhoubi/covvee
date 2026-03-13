@@ -4,6 +4,7 @@ import com.covvee.dto.folder.request.CreateFolderRequest;
 import com.covvee.dto.folder.response.FolderResponse;
 import com.covvee.security.AppUserDetails;
 import com.covvee.service.FolderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +21,7 @@ public class FolderController { // Renamed class
     // Create a new folder
     // POST /folders
     @PostMapping
-    public ResponseEntity<FolderResponse> createFolder(@RequestBody CreateFolderRequest request) {
+    public ResponseEntity<FolderResponse> createFolder(@Valid @RequestBody CreateFolderRequest request) {
         return ResponseEntity.ok(folderService.createFolder(request));
     }
 

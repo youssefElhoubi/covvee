@@ -32,7 +32,9 @@ public class Project {
     @DBRef
     private User user;
     @DBRef
+    @Builder.Default
     private List<Folder> folders = new ArrayList<>();
+    @Builder.Default
     private List<File> rootFiles = new ArrayList<>();
     @CreatedDate
     private LocalDateTime createdAt;
