@@ -23,5 +23,7 @@ public class User {
     private String password;
     private Role role;
     private String avatarUrl;
+    private boolean isBanned = false;
+    private String banReason;
     private LocalDateTime createdAt;
 }
