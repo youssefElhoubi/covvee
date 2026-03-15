@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import java.util.List;
 
 @Validated
-public interface AuditLogService {
+public interface AuditLogInterface  {
     void logAction(@Valid CreateAuditLogDto request);
 
     List<AuditLogResponse> getRecentLogs();
