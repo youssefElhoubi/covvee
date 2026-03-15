@@ -6,6 +6,7 @@ import com.covvee.dto.user.response.UserResponseDTo;
 import com.covvee.entity.User;
 import com.covvee.execption.ResourceNotFoundException;
 import com.covvee.mapper.UserMapper;
+import com.covvee.repository.ProjectRepository;
 import com.covvee.repository.UserRepository;
 import com.covvee.service.interfaces.AdminServiceInterface;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminService implements AdminServiceInterface {
     private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
     private final UserMapper userMapper;
 
     @Override
@@ -98,6 +100,6 @@ public class AdminService implements AdminServiceInterface {
 
     @Override
     public List<LanguageStatResponse> getLanguageAnalytics() {
-        return List.of();
+        return projectRepository.getLanguageStatistics();
     }
 }
