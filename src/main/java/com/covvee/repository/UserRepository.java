@@ -17,6 +17,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     // "Or" -> OR
     // "Email" -> email
     // "ContainingIgnoreCase" -> LIKE %keyword% (case insensitive)
-    Page<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(String username, String email, Pageable pageable);
+    Page<User> findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String name, String email, Pageable pageable);
     Optional<User> findByEmail(String email);
 }

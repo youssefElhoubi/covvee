@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/api/file/**").hasRole("USER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/audit-logs/**").hasRole("ADMIN")
                         .requestMatchers("/api/folders/**").hasRole("USER")
                         .requestMatchers("/api/folder/**").hasRole("USER")
                         .requestMatchers("/api/project/**").hasRole("USER")

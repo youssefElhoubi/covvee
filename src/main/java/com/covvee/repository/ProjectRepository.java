@@ -8,9 +8,13 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ProjectRepository extends MongoRepository<Project,String> {
+
+    List<Project> findAllByUserIdIn(List<String> userId);
+    List<Project> findByUserIn(List<User> users);
     List<Project> findByUser(User user);
     boolean findByIdAndUser(String id, User user);
     @Aggregation(pipeline = {
@@ -18,4 +22,6 @@ public interface ProjectRepository extends MongoRepository<Project,String> {
             "{ '$project': { 'language': '$_id', 'count': 1, '_id': 0 } }"
     })
     List<LanguageStatResponse> getLanguageStatistics();
+
+    Map<String, Project> findAllByUserId(String userId);
 }

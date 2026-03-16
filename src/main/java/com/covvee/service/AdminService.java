@@ -3,6 +3,7 @@ package com.covvee.service;
 import com.covvee.dto.admin.LanguageStatResponse;
 import com.covvee.dto.admin.SystemHealthResponse;
 import com.covvee.dto.user.response.UserResponseDTo;
+import com.covvee.entity.Project;
 import com.covvee.entity.User;
 import com.covvee.execption.ResourceNotFoundException;
 import com.covvee.mapper.UserMapper;
@@ -10,14 +11,13 @@ import com.covvee.repository.ProjectRepository;
 import com.covvee.repository.UserRepository;
 import com.covvee.service.interfaces.AdminServiceInterface;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +25,6 @@ public class AdminService implements AdminServiceInterface {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final UserMapper userMapper;
-
-    @Override
-    public Page<UserResponseDTo> getPaginatedUsers(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<User> userPage = userRepository.findAll(pageable);
-        return userPage.map(userMapper::toBaseUserResponse);
-    }
 
     @Override
     public void banUser(String userId, String reason) {
@@ -52,15 +45,23 @@ public class AdminService implements AdminServiceInterface {
     @Override
     public Page<UserResponseDTo> searchUsers(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        if (keyword == null || keyword.trim().isEmpty()) {
-            return userRepository.findAll(pageable).map(userMapper::toBaseUserResponse);
-        }
-        Page<User> searchResults = userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-                keyword,
-                keyword,
-                pageable
-        );
-        return searchResults.map(userMapper::toBaseUserResponse);
+        Page<User> userPage = userRepository.findAll(pageable);
+
+        List<User> usersOnThisPage = userPage.getContent();
+
+        List<Project> projectsForThisPage = projectRepository.findByUserIn(usersOnThisPage);
+
+        Map<String, List<Project>> projectsByUserId = projectsForThisPage.stream()
+                .collect(Collectors.groupingBy(project -> project.getUser().getId()));
+
+        List<UserResponseDTo> userWithProjects = userPage.stream()
+                .map(user -> {
+                    List<Project> userProjects = projectsByUserId.getOrDefault(user.getId(), List.of());
+                    return userMapper.toUserResponse(user, userProjects);
+                })
+                .toList();
+
+        return new PageImpl<>(userWithProjects, pageable, userPage.getTotalElements());
     }
 
     @Override
