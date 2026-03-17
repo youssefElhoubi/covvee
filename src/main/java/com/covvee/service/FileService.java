@@ -26,11 +26,11 @@ public class FileService implements FileServiceInterface {
     private final FileMapper fileMapper;
     private final FolderRepository folderRepository;
 
-//    rest
+    //    rest
     @Override
     public FileResponse createFile(CreateFileRequest request) {
         File file = fileMapper.toEntity(request);
-        Folder parentFolder = folderRepository.findById(request.getParentFolderId()).orElseThrow(()-> new ResourceAccessException("Folder not found"));
+        Folder parentFolder = folderRepository.findById(request.getParentFolderId()).orElseThrow(() -> new ResourceAccessException("Folder not found"));
         List<File> files = parentFolder.getFiles();
         files.add(file);
         parentFolder.setFiles(files);
@@ -38,42 +38,47 @@ public class FileService implements FileServiceInterface {
         return fileMapper.toResponse(fileRepository.save(file));
     }
 
-//    socket
+    //    socket
     @Override
     public FileResponse getFileById(String fileId) {
-        File file = fileRepository.findById(fileId).orElseThrow(()-> new ResourceAccessException("File not found"));
+        File file = fileRepository.findById(fileId).orElseThrow(() -> new ResourceAccessException("File not found"));
         return fileMapper.toResponse(file);
     }
-//    socket
+
+    //    socket
     @Override
     public FileResponse updateFileContent(String fileId, UpdateFileDto content) {
-        File file = fileRepository.findById(fileId).orElseThrow(()-> new ResourceAccessException("File not found"));
-        byte[] decodeBytes = Base64.getDecoder().decode(content.getContent());
-        String decodeContent = new String(decodeBytes, StandardCharsets.UTF_8);
-        file.setContent(decodeContent);
+        File file = fileRepository.findById(fileId)
+                .orElseThrow(() -> new ResourceAccessException("File not found"));
+        file.setContent(content.getContent());
+
         return fileMapper.toResponse(fileRepository.save(file));
     }
-//    socket
+
+    //    socket
     @Override
     public FileResponse renameFile(String fileId, RenameFileDto newName) {
-        File file = fileRepository.findById(fileId).orElseThrow(()-> new ResourceAccessException("File not found"));
+        File file = fileRepository.findById(fileId).orElseThrow(() -> new ResourceAccessException("File not found"));
         file.setName(newName.getNewName());
         return fileMapper.toResponse(fileRepository.save(file));
     }
-//    rest
+
+    //    rest
     @Override
     public void deleteFile(String fileId) {
-        File file = fileRepository.findById(fileId).orElseThrow(()-> new ResourceAccessException("File not found"));
+        File file = fileRepository.findById(fileId).orElseThrow(() -> new ResourceAccessException("File not found"));
         fileRepository.delete(file);
     }
-//    rest
+
+    //    rest
     @Override
     public FileResponse moveFile(String fileId, String newParentFolderId) {
-        File file = fileRepository.findById(fileId).orElseThrow(()-> new ResourceAccessException("File not found"));
+        File file = fileRepository.findById(fileId).orElseThrow(() -> new ResourceAccessException("File not found"));
         file.setParentId(newParentFolderId);
         return fileMapper.toResponse(fileRepository.save(file));
     }
-//    socket
+
+    //    socket
     @Override
     public List<FileResponse> getAllFilesByProjectId(String projectId) {
         List<File> files = fileRepository.findByProjectId(projectId);

@@ -44,7 +44,7 @@ public class FileWebSocket {
 
     @MessageMapping("/rename/{id}")
     @SendTo("/topic/rename/{id}")
-    @PreAuthorize("@projectFileSecurity.ownFile(#id,#userDetails)")
+    @PreAuthorize("@projectFileSecurity.ownFile(#id,principal)")
     public FileResponse renameFile(
             @DestinationVariable String id,
             @Valid @Payload RenameFileDto content,
@@ -54,7 +54,7 @@ public class FileWebSocket {
 
     @MessageMapping("/delete/{id}")
     @SendTo("/topic/delete/{id}")
-    @PreAuthorize("@projectFileSecurity.ownFile(#id,#userDetails)")
+    @PreAuthorize("@projectFileSecurity.ownFile(#id,principal)")
     public String deleteFile(
             @DestinationVariable String id,
             @AuthenticationPrincipal AppUserDetails userDetails) {
