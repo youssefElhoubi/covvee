@@ -50,7 +50,6 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
                         // Tells Spring Messaging who the user is
                         accessor.setUser(authentication);
-                        System.out.println("🎯 CONNECT: Token valid! User set to -> " + authentication.getName());
                     }
                 }
             }
@@ -62,10 +61,6 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
         if (accessor != null && accessor.getUser() != null) {
             SecurityContextHolder.getContext().setAuthentication((Authentication) accessor.getUser());
         }
-        System.out.println("🌉 BRIDGE: Command -> " + accessor.getCommand() +
-                " | User -> " + accessor.getUser() +
-                " | Thread -> " + Thread.currentThread().getName());
-
         return message;
     }
 
