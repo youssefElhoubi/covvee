@@ -20,18 +20,18 @@ public class ProjectFileSecurity {
 
     public boolean ownProject(String projectId, AppUserDetails authentication) {
         User user = authentication.getUser();
-        return projectRepository.findByIdAndUser(projectId, user);
+        return projectRepository.existsByIdAndUser(projectId, user);
     }
     public boolean ownFile(String fileId, AppUserDetails authentication) {
         User user = authentication.getUser();
         File file = fileRepository.findById(fileId).orElseThrow(()->new ResourceNotFoundException("file not found"));
 
-        return projectRepository.findByIdAndUser(file.getProjectId(), user);
+        return projectRepository.existsByIdAndUser(file.getProjectId(), user);
     }
     public boolean ownFolder(String fileId, AppUserDetails authentication) {
         User user = authentication.getUser();
         Folder folder = folderRepository.findById(fileId).orElseThrow(()->new ResourceNotFoundException("file not found"));
 
-        return projectRepository.findByIdAndUser(folder.getProjectId(), user);
+        return projectRepository.existsByIdAndUser(folder.getProjectId(), user);
     }
 }

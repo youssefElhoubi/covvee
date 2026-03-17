@@ -28,7 +28,7 @@ public class FileWebSocket {
 
     @MessageMapping("/update/{id}")
     @SendTo("/topic/data/{id}")
-    @PreAuthorize("@projectFileSecurity.ownFile(#id,userDetails)")
+    @PreAuthorize("@projectFileSecurity.ownFile(#id,principal)")
     public FileResponse updateContent(
             @DestinationVariable String id,
             @Valid @Payload UpdateFileDto content,
@@ -44,7 +44,7 @@ public class FileWebSocket {
 
     @MessageMapping("/rename/{id}")
     @SendTo("/topic/rename/{id}")
-    @PreAuthorize("@projectFileSecurity.ownFile(#id,userDetails)")
+    @PreAuthorize("@projectFileSecurity.ownFile(#id,#userDetails)")
     public FileResponse renameFile(
             @DestinationVariable String id,
             @Valid @Payload RenameFileDto content,
@@ -54,7 +54,7 @@ public class FileWebSocket {
 
     @MessageMapping("/delete/{id}")
     @SendTo("/topic/delete/{id}")
-    @PreAuthorize("@projectFileSecurity.ownFile(#id,userDetails)")
+    @PreAuthorize("@projectFileSecurity.ownFile(#id,#userDetails)")
     public String deleteFile(
             @DestinationVariable String id,
             @AuthenticationPrincipal AppUserDetails userDetails) {
@@ -64,7 +64,7 @@ public class FileWebSocket {
 
     @MessageMapping("/move/{id}")
     @SendTo("/topic/move/{id}")
-    @PreAuthorize("@projectFileSecurity.ownFile(#id,userDetails)")
+    @PreAuthorize("@projectFileSecurity.ownFile(#id, principal)")
     public FileResponse moveFile(
             @DestinationVariable String id,
             @Payload String newParentFolderId,

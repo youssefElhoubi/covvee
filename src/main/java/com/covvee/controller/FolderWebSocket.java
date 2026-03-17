@@ -35,7 +35,7 @@ public class FolderWebSocket {
 
     @MessageMapping("/folders.rename.{id}")
     @SendTo("/topic/folders/{id}")
-    @PreAuthorize("@projectFileSecurity.ownFolder(#id,userDetails)")
+    @PreAuthorize("@projectFileSecurity.ownFolder(#id,#userDetails)")
     public FolderResponse renameFolder(
             @DestinationVariable String id,
             @Payload String name,
@@ -45,7 +45,7 @@ public class FolderWebSocket {
 
     @MessageMapping("/folders.move.{id}")
     @SendTo("/topic/folders/{id}")
-    @PreAuthorize("@projectFileSecurity.ownFolder(#id,userDetails)")
+    @PreAuthorize("@projectFileSecurity.ownFolder(#id,#userDetails)")
     public FolderResponse moveFolder(
             @DestinationVariable String id,
             @Payload String destination,
@@ -55,7 +55,7 @@ public class FolderWebSocket {
 
     @MessageMapping("/folders.delete.{id}")
     @SendTo("/topic/folders/deleted")
-    @PreAuthorize("@projectFileSecurity.ownFolder(#id,userDetails)")
+    @PreAuthorize("@projectFileSecurity.ownFolder(#id,#userDetails)")
     public String deleteFolder(
             @DestinationVariable String id,
             @AuthenticationPrincipal AppUserDetails userDetails) {

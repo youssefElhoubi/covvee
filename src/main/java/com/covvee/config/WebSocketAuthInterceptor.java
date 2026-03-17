@@ -9,6 +9,8 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
@@ -23,7 +25,7 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        // We ONLY check the token when the client first connects
+        // 1. Handle initial connection and token validation
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
 
             // Grab the token from the STOMP header
@@ -46,12 +48,32 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
                                         userDetails, null, userDetails.getAuthorities()
                                 );
 
-                        // THIS is the magic line that makes @AuthenticationPrincipal work
+                        // Tells Spring Messaging who the user is
                         accessor.setUser(authentication);
+                        System.out.println("🎯 CONNECT: Token valid! User set to -> " + authentication.getName());
                     }
                 }
             }
         }
-        return message; // Let the message proceed
+
+        // 2. THE MISSING BRIDGE:
+        // For ALL incoming messages (not just CONNECT), copy the user from the
+        // WebSocket session into Spring Security's ThreadLocal context.
+        if (accessor != null && accessor.getUser() != null) {
+            SecurityContextHolder.getContext().setAuthentication((Authentication) accessor.getUser());
+        }
+        System.out.println("🌉 BRIDGE: Command -> " + accessor.getCommand() +
+                " | User -> " + accessor.getUser() +
+                " | Thread -> " + Thread.currentThread().getName());
+
+        return message;
+    }
+
+    // 3. CRITICAL CLEANUP:
+    // Worker threads are pooled! You MUST clear the context after the message is sent,
+    // otherwise User A's credentials might accidentally authorize User B's websocket message.
+    @Override
+    public void afterSendCompletion(Message<?> message, MessageChannel channel, boolean sent, Exception ex) {
+        SecurityContextHolder.clearContext();
     }
 }
