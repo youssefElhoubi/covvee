@@ -26,16 +26,18 @@ public class FileService implements FileServiceInterface {
     private final FileMapper fileMapper;
     private final FolderRepository folderRepository;
 
-    //    rest
+
     @Override
     public FileResponse createFile(CreateFileRequest request) {
         File file = fileMapper.toEntity(request);
-        Folder parentFolder = folderRepository.findById(request.getParentFolderId()).orElseThrow(() -> new ResourceAccessException("Folder not found"));
+        Folder parentFolder = folderRepository.findById(request.getParentFolderId())
+                .orElseThrow(() -> new ResourceAccessException("Folder not found"));
+        file = fileRepository.save(file);
         List<File> files = parentFolder.getFiles();
         files.add(file);
         parentFolder.setFiles(files);
         folderRepository.save(parentFolder);
-        return fileMapper.toResponse(fileRepository.save(file));
+        return fileMapper.toResponse(file);
     }
 
     //    socket

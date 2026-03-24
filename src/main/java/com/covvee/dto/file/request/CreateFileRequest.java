@@ -12,6 +12,6 @@ public class CreateFileRequest {
     @Pattern(regexp = "^.*\\.[a-zA-Z0-9]+$", message = "File name must have a valid extension (e.g., main.java)")
     private String name;
     @NotBlank(message = "Project ID is required")
-    private String projectId;
     private String parentFolderId;
+    private String projectId;
 }

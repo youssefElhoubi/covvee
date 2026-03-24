@@ -4,9 +4,11 @@ import com.covvee.dto.folder.request.CreateFolderRequest;
 import com.covvee.dto.folder.response.FolderResponse;
 import com.covvee.security.AppUserDetails;
 import com.covvee.service.FolderService;
+import com.covvee.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +19,19 @@ import org.springframework.web.bind.annotation.*;
 public class FolderController { // Renamed class
 
     private final FolderService folderService;
+    private final ProjectService projectService;
+
+    private final SimpMessagingTemplate messagingTemplate;
+
 
     // Create a new folder
     // POST /folders
     @PostMapping
     public ResponseEntity<FolderResponse> createFolder(@Valid @RequestBody CreateFolderRequest request) {
-        return ResponseEntity.ok(folderService.createFolder(request));
+        FolderResponse folderResponse = folderService.createFolder(request);
+        String projectId = request.getProjectId();
+        messagingTemplate.convertAndSend("/topic/project/"+projectId, projectService.getProject(projectId));
+        return ResponseEntity.ok(folderResponse);
     }
 
     // Get a specific folder by ID
