@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ProjectWebsocket {
     private final ProjectService projectService;
-    @MessageMapping("/project{id}")
+    @MessageMapping("/project/{id}")
     @SendTo("/topic/project/{id}")
     public ProjectDetailResponse getProject(
             @DestinationVariable String id,
