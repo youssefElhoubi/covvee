@@ -6,10 +6,15 @@ import com.covvee.dto.project.response.ProjectDetailResponse;
 import com.covvee.dto.project.response.ProjectSummaryResponse;
 import com.covvee.entity.Project;
 import com.covvee.entity.User;
+import com.covvee.enums.Language;
 import com.covvee.mapper.ProjectMapper;
 import com.covvee.repository.ProjectRepository;
 import com.covvee.service.interfaces.ProjectServiceInterface;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.ResourceAccessException;
@@ -73,5 +78,12 @@ public class ProjectService implements ProjectServiceInterface {
     public List<ProjectDetailResponse> userProjects(User user) {
         List<Project> projects = projectRepository.findByUser(user);
         return projects.stream().map(projectMapper::toDetail).toList();
+    }
+
+    @Override
+    public Page<Project> ProjectSearch(Language language, String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        return null;
     }
 }

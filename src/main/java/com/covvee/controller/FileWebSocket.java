@@ -1,8 +1,10 @@
 package com.covvee.controller;
 
+import com.covvee.dto.file.request.CreateFileRequest;
 import com.covvee.dto.file.request.RenameFileDto;
 import com.covvee.dto.file.request.UpdateFileDto;
 import com.covvee.dto.file.response.FileResponse;
+import com.covvee.entity.File;
 import com.covvee.security.AppUserDetails;
 import com.covvee.service.FileService;
 import jakarta.validation.Valid;
@@ -45,21 +47,22 @@ public class FileWebSocket {
     @MessageMapping("/rename/{id}")
     @SendTo("/topic/rename/{id}")
     @PreAuthorize("@projectFileSecurity.ownFile(#id,principal)")
-    public FileResponse renameFile(
+    public void renameFile(
             @DestinationVariable String id,
             @Valid @Payload RenameFileDto content,
             @AuthenticationPrincipal AppUserDetails userDetails) {
-        return fileService.renameFile(id, content);
+        File file = fileService.renameFile(id, content);
+        messagingTemplate.convertAndSend("/topic/project/"+ file.getProjectId(),"update file list");
     }
 
     @MessageMapping("/delete/{id}")
     @SendTo("/topic/delete/{id}")
     @PreAuthorize("@projectFileSecurity.ownFile(#id,principal)")
-    public String deleteFile(
+    public void deleteFile(
             @DestinationVariable String id,
             @AuthenticationPrincipal AppUserDetails userDetails) {
-        fileService.deleteFile(id);
-        return id; // Returned the ID so your React frontend knows which file to remove from the UI
+        String projectId = fileService.deleteFile(id);
+        messagingTemplate.convertAndSend("/topic/project/"+ projectId,"update file list");
     }
 
     @MessageMapping("/move/{id}")
@@ -70,6 +73,15 @@ public class FileWebSocket {
             @Payload String newParentFolderId,
             @AuthenticationPrincipal AppUserDetails userDetails) {
         return fileService.moveFile(id, newParentFolderId);
+    }
+    @MessageMapping("create/{projectId}")
+    @SendTo("/topic/create/{projectId}")
+    public FileResponse createFile(
+            @DestinationVariable String projectId,
+            @Valid @Payload CreateFileRequest request) {
+        FileResponse fileResponse = fileService.createFile(request);
+        messagingTemplate.convertAndSend("/topic/project/"+ projectId,"update file list");
+        return fileResponse;
     }
 
     @MessageMapping("/project/files/{id}")

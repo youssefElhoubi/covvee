@@ -3,12 +3,17 @@ package com.covvee.repository;
 import com.covvee.dto.admin.LanguageStatResponse;
 import com.covvee.entity.Project;
 import com.covvee.entity.User;
+import com.covvee.enums.Language;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Pageable;
+
 
 @Repository
 public interface ProjectRepository extends MongoRepository<Project,String> {
@@ -16,12 +21,15 @@ public interface ProjectRepository extends MongoRepository<Project,String> {
     List<Project> findAllByUserIdIn(List<String> userId);
     List<Project> findByUserIn(List<User> users);
     List<Project> findByUser(User user);
+
     boolean existsByIdAndUser(String id, User user);
     @Aggregation(pipeline = {
             "{ '$group': { '_id': '$language', 'count': { '$sum': 1 } } }",
             "{ '$project': { 'language': '$_id', 'count': 1, '_id': 0 } }"
     })
     List<LanguageStatResponse> getLanguageStatistics();
+
+    Page<Project> findByLanguageOrName(Language language, String name,Pageable pageable);
 
     Map<String, Project> findAllByUserId(String userId);
 }

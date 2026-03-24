@@ -4,6 +4,7 @@ import com.covvee.dto.file.request.CreateFileRequest;
 import com.covvee.dto.file.request.RenameFileDto;
 import com.covvee.dto.file.request.UpdateFileDto;
 import com.covvee.dto.file.response.FileResponse;
+import com.covvee.entity.File;
 
 import java.util.List;
 
@@ -15,9 +16,9 @@ public interface FileServiceInterface {
 
     FileResponse updateFileContent(String fileId, UpdateFileDto content);
 
-    FileResponse renameFile(String fileId, RenameFileDto newName);
+    File renameFile(String fileId, RenameFileDto newName);
 
-    void deleteFile(String fileId);
+    String deleteFile(String fileId);
 
     FileResponse moveFile(String fileId, String newParentFolderId);
 

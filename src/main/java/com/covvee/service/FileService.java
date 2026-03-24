@@ -57,17 +57,19 @@ public class FileService implements FileServiceInterface {
 
     //    socket
     @Override
-    public FileResponse renameFile(String fileId, RenameFileDto newName) {
+    public File renameFile(String fileId, RenameFileDto newName) {
         File file = fileRepository.findById(fileId).orElseThrow(() -> new ResourceAccessException("File not found"));
         file.setName(newName.getNewName());
-        return fileMapper.toResponse(fileRepository.save(file));
+        return fileRepository.save(file);
     }
 
     //    rest
     @Override
-    public void deleteFile(String fileId) {
+    public String deleteFile(String fileId) {
         File file = fileRepository.findById(fileId).orElseThrow(() -> new ResourceAccessException("File not found"));
+        String projectID = file.getProjectId();
         fileRepository.delete(file);
+        return projectID;
     }
 
     //    rest
