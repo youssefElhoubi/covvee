@@ -34,15 +34,16 @@ public class FileController {
         return ResponseEntity.ok(fileResponse);
     }
     @DeleteMapping
-    public ResponseEntity<String> deleteFile(@Valid @RequestBody DeleteFileDto createFileRequest) {
-        String fileResponse = fileService.deleteFile(createFileRequest.getFileId());
+    public ResponseEntity<String> deleteFile(@Valid @RequestBody DeleteFileDto deleteRequest) {
 
-        String projectId = createFileRequest.getProjectId();
-        projectService.getProject(projectId);
+        // 1. Pass BOTH IDs to the service to safely clean up MongoDB.
+        // The service returns the projectId, so we save it right here!
+        String projectId = fileService.deleteFile(deleteRequest.getFileId());
 
-        // 4. Broadcast to the topic
+        // 2. Fetch the updated tree and broadcast it to the WebSocket
         messagingTemplate.convertAndSend("/topic/project/" + projectId, projectService.getProject(projectId));
 
-        return ResponseEntity.ok(fileResponse);
+        // 3. Return success to the frontend
+        return ResponseEntity.ok(projectId);
     }
 }

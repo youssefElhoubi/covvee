@@ -68,9 +68,16 @@ public class FileService implements FileServiceInterface {
     //    rest
     @Override
     public String deleteFile(String fileId) {
-        File file = fileRepository.findById(fileId).orElseThrow(() -> new ResourceAccessException("File not found"));
+        File file = fileRepository.findById(fileId)
+                .orElseThrow(() -> new ResourceAccessException("File not found"));
         String projectID = file.getProjectId();
+        Folder parentFolder = folderRepository.findById(file.getParentId())
+                .orElseThrow(() -> new ResourceAccessException("Folder not found"));
+        parentFolder.getFiles().removeIf(f -> f.getId().equals(fileId));
+
+        folderRepository.save(parentFolder);
         fileRepository.delete(file);
+
         return projectID;
     }
 
