@@ -8,8 +8,10 @@ import com.covvee.utils.ProjectMaterializer;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -24,22 +26,34 @@ public class ExecutionService implements ExecutionInterface {
     @SneakyThrows
     @Override
     public ExecutionResult runProject(String projectId) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceAccessException("project was not found "));
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceAccessException("project was not found"));
+
         Path tempDir = null;
 
+        try {
             // 1. Create a temp folder
             tempDir = Files.createTempDirectory("covvee_run_" + projectId + "_");
 
             // 2. MAGIC HAPPENS HERE: Database -> Real Disk
             projectMaterializer.materializeProject(projectId, tempDir);
 
-            // 3. Now 'tempDir' is a perfect copy of the project.
-            // You can mount it to Docker!
-            dockerService.execute(tempDir, project.getLanguage());
+            // 3. Now 'tempDir' is a perfect copy of the project. Execute it!
+            // Notice we are returning the actual result here instead of null
+            return dockerService.execute(tempDir, project.getLanguage());
 
+        } finally {
             // 4. CLEANUP (Crucial!)
-            // deleteDirectory(tempDir
-        return null;
+            // This 'finally' block guarantees the folder is deleted even if the code above crashes.
+            if (tempDir != null) {
+                try {
+                    FileSystemUtils.deleteRecursively(tempDir);
+                } catch (IOException e) {
+                    // Log the error so you know a file got stuck, but don't crash the app
+                    System.err.println("Failed to delete temp directory: " + tempDir.toAbsolutePath());
+                }
+            }
+        }
     }
 
 

@@ -19,10 +19,6 @@ import java.util.concurrent.TimeUnit;
 public class DockerService {
     private final DockerClient dockerClient;
 
-    /**
-     * @param hostSourcePath The path on YOUR server (/tmp/covvee_run_123)
-     * @param language The project language (PYTHON, JAVASCRIPT)
-     */
     public ExecutionResult execute(Path hostSourcePath, Language language) {
 
         String image = getImageForLanguage(language);
