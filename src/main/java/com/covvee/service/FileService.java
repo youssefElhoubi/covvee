@@ -6,9 +6,11 @@ import com.covvee.dto.file.request.UpdateFileDto;
 import com.covvee.dto.file.response.FileResponse;
 import com.covvee.entity.File;
 import com.covvee.entity.Folder;
+import com.covvee.entity.Project;
 import com.covvee.mapper.FileMapper;
 import com.covvee.repository.FileRepository;
 import com.covvee.repository.FolderRepository;
+import com.covvee.repository.ProjectRepository;
 import com.covvee.service.interfaces.FileServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,18 +27,24 @@ public class FileService implements FileServiceInterface {
     private final FileRepository fileRepository;
     private final FileMapper fileMapper;
     private final FolderRepository folderRepository;
+    private final ProjectRepository projectRepository;
 
 
     @Override
     public FileResponse createFile(CreateFileRequest request) {
         File file = fileMapper.toEntity(request);
-        Folder parentFolder = folderRepository.findById(request.getParentFolderId())
-                .orElseThrow(() -> new ResourceAccessException("Folder not found"));
         file = fileRepository.save(file);
-        List<File> files = parentFolder.getFiles();
-        files.add(file);
-        parentFolder.setFiles(files);
-        folderRepository.save(parentFolder);
+        if (request.getParentFolderId() == null) {
+            Project project = projectRepository.findById(request.getProjectId())
+                    .orElseThrow(() -> new ResourceAccessException("Project not found"));
+            project.getRootFiles().add(file);
+            projectRepository.save(project);
+        } else {
+            Folder parentFolder = folderRepository.findById(request.getParentFolderId())
+                    .orElseThrow(() -> new ResourceAccessException("Folder not found"));
+            parentFolder.getFiles().add(file);
+            folderRepository.save(parentFolder);
+        }
         return fileMapper.toResponse(file);
     }
 

@@ -30,9 +30,15 @@ public class FolderService implements FolderInterface {
         Folder folder = folderMapper.toEntity(request);
         folder = folderRepository.save(folder);
         if (request.getParentFolderId() != null) {
-            Folder parent = folderRepository.findById(folder.getParentId()).orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
+            Folder parent = folderRepository.findById(request.getParentFolderId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
             parent.getChildren().add(folder);
             folderRepository.save(parent);
+        } else {
+            Project project = projectRepository.findById(request.getProjectId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+            project.getFolders().add(folder);
+            projectRepository.save(project);
         }
         return folderMapper.toResponse(folder);
     }
