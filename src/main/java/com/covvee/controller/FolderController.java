@@ -45,15 +45,16 @@ public class FolderController { // Renamed class
     // PUT /folders/{id}/rename
     // Note: Accepts the new name as the Request Body
     @PutMapping("/{id}/rename")
-    @PreAuthorize("@projectFileSecurity.ownFolder(#id,userDetails)")
+    @PreAuthorize("@projectFileSecurity.ownFolder(#id,principal)")
     public ResponseEntity<FolderResponse> renameFolder(@PathVariable String id, @RequestBody String name, @AuthenticationPrincipal AppUserDetails userDetails) {
+
         return ResponseEntity.ok(folderService.renameFolder(id, name));
     }
 
     // Move a folder
     // PUT /folders/{id}/move
     @PutMapping("/{id}/move")
-    @PreAuthorize("@projectFileSecurity.ownFolder(#id,userDetails)")
+    @PreAuthorize("@projectFileSecurity.ownFolder(#id,principal)")
     public ResponseEntity<FolderResponse> moveFolder(@PathVariable String id, @RequestBody String destination, @AuthenticationPrincipal AppUserDetails userDetails) {
         return ResponseEntity.ok(folderService.moveFolder(id, destination));
     }
@@ -61,9 +62,12 @@ public class FolderController { // Renamed class
     // Delete a folder
     // DELETE /folders/{id}
     @DeleteMapping("/{id}")
-    @PreAuthorize("@projectFileSecurity.ownFolder(#id,userDetails)")
+    @PreAuthorize("@projectFileSecurity.ownFolder(#id,principal)")
     public ResponseEntity<String> deleteFolder(@PathVariable String id, @AuthenticationPrincipal AppUserDetails userDetails) {
-        folderService.deleteFolder(id);
-        return ResponseEntity.ok("Folder deleted");
+        String projectId = folderService.deleteFolder(id);
+        messagingTemplate.convertAndSend("/topic/project/" + projectId, projectService.getProject(projectId));
+
+        // 3. Return success to the frontend
+        return ResponseEntity.ok(projectId);
     }
 }

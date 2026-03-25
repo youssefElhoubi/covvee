@@ -3,9 +3,11 @@ package com.covvee.service;
 import com.covvee.dto.folder.request.CreateFolderRequest;
 import com.covvee.dto.folder.response.FolderResponse;
 import com.covvee.entity.Folder;
+import com.covvee.entity.Project;
 import com.covvee.execption.ResourceNotFoundException;
 import com.covvee.mapper.FolderMapper;
 import com.covvee.repository.FolderRepository;
+import com.covvee.repository.ProjectRepository;
 import com.covvee.service.interfaces.folder.FolderInterface;
 import com.covvee.utils.FolderUtils;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FolderService implements FolderInterface {
     private final FolderRepository folderRepository;
+    private final ProjectRepository projectRepository;
     private final FolderMapper folderMapper;
     private final FolderUtils folderUtils;
 
@@ -93,10 +96,13 @@ public class FolderService implements FolderInterface {
     }
 
     @Override
-    public void deleteFolder(String folderId) {
+    public String deleteFolder(String folderId) {
         Folder folder = folderRepository.findById(folderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
+        Project project = projectRepository.findById(folder.getProjectId())
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
         folderUtils.childrenSafeRemove(List.of(folder));
+        return project.getId();
 
     }
 

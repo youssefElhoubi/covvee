@@ -12,4 +12,6 @@ public class RenameFileDto {
     @Pattern(regexp = "^[^\\\\/]*$", message = "File name cannot contain slashes")
     @Pattern(regexp = "^.*\\.[a-zA-Z0-9]+$", message = "File name must have a valid extension")
     private String newName;
+    private String fileId;
+    private String projectId;
 }

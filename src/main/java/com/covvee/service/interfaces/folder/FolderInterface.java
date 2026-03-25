@@ -51,7 +51,7 @@ public interface FolderInterface {
      * 4. Finally, delete the folder itself.
      * @param folderId The ID of the folder to delete.
      */
-    void deleteFolder(String folderId);
+    String deleteFolder(String folderId);
 
     /**
      * Internal/Advanced: Fetches all folders for a project.
