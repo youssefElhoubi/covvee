@@ -6,17 +6,14 @@ import com.covvee.service.ExecutionService;
 import com.covvee.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("execute")
+@RequestMapping("/execute")
 public class Execution {
     private final ExecutionService executionService;
-    @GetMapping("project")
+    @PostMapping("/project")
     public ResponseEntity<ExecutionResult> execute(@RequestBody String projectId) {
         return ResponseEntity.ok(executionService.runProject(projectId));
     }

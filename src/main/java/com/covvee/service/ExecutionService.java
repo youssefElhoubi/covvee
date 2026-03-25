@@ -2,6 +2,7 @@ package com.covvee.service;
 
 import com.covvee.dto.ExecutionResult;
 import com.covvee.entity.Project;
+import com.covvee.execption.ResourceNotFoundException;
 import com.covvee.repository.ProjectRepository;
 import com.covvee.service.interfaces.ExecutionInterface;
 import com.covvee.utils.ProjectMaterializer;
@@ -27,7 +28,7 @@ public class ExecutionService implements ExecutionInterface {
     @Override
     public ExecutionResult runProject(String projectId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ResourceAccessException("project was not found"));
+                .orElseThrow(() ->  new ResourceNotFoundException("project was not found"));
 
         Path tempDir = null;
 
