@@ -1,6 +1,7 @@
 package com.covvee.controller;
 
 import com.covvee.dto.folder.request.CreateFolderRequest;
+import com.covvee.dto.folder.request.RenameFolderDto;
 import com.covvee.dto.folder.response.FolderResponse;
 import com.covvee.security.AppUserDetails;
 import com.covvee.service.FolderService;
@@ -44,11 +45,13 @@ public class FolderController { // Renamed class
     // Rename a folder
     // PUT /folders/{id}/rename
     // Note: Accepts the new name as the Request Body
-    @PutMapping("/{id}/rename")
-    @PreAuthorize("@projectFileSecurity.ownFolder(#id,principal)")
-    public ResponseEntity<FolderResponse> renameFolder(@PathVariable String id, @RequestBody String name, @AuthenticationPrincipal AppUserDetails userDetails) {
-
-        return ResponseEntity.ok(folderService.renameFolder(id, name));
+    @PutMapping("/rename")
+    @PreAuthorize("@projectFileSecurity.ownFolder(#request.folderId,principal)")
+    public ResponseEntity<FolderResponse> renameFolder(@Valid @RequestBody RenameFolderDto request, @AuthenticationPrincipal AppUserDetails userDetails) {
+        FolderResponse folderResponse = folderService.renameFolder(request.getFolderId(), request.getNewName());
+        String projectId = request.getProjectId();
+        messagingTemplate.convertAndSend("/topic/project/"+projectId, projectService.getProject(projectId));
+        return ResponseEntity.ok(folderResponse);
     }
 
     // Move a folder
