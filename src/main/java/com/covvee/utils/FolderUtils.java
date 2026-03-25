@@ -14,15 +14,21 @@ public class FolderUtils {
     private final FolderRepository folderRepository;
     private final FileRepository fileRepository;
 
-    public void childrenSafeRemove(List<Folder> folders){
+    public void childrenSafeRemove(List<Folder> folders) {
         if (folders == null || folders.isEmpty()) return;
 
         for (Folder f : folders) {
+            if (f == null) continue;
             if (f.getChildren() != null && !f.getChildren().isEmpty()) {
                 childrenSafeRemove(f.getChildren());
             }
+
             if (f.getFiles() != null && !f.getFiles().isEmpty()) {
-                fileRepository.deleteAll(f.getFiles());
+                f.getFiles().removeIf(file -> file == null);
+
+                if (!f.getFiles().isEmpty()) {
+                    fileRepository.deleteAll(f.getFiles());
+                }
             }
             folderRepository.delete(f);
         }

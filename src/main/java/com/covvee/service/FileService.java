@@ -1,6 +1,7 @@
 package com.covvee.service;
 
 import com.covvee.dto.file.request.CreateFileRequest;
+import com.covvee.dto.file.request.DeleteFileDto;
 import com.covvee.dto.file.request.RenameFileDto;
 import com.covvee.dto.file.request.UpdateFileDto;
 import com.covvee.dto.file.response.FileResponse;
@@ -75,17 +76,22 @@ public class FileService implements FileServiceInterface {
 
     //    rest
     @Override
-    public String deleteFile(String fileId) {
-        File file = fileRepository.findById(fileId)
+    public String deleteFile(DeleteFileDto request) {
+        File file = fileRepository.findById(request.getFileId())
                 .orElseThrow(() -> new ResourceAccessException("File not found"));
         String projectID = file.getProjectId();
-        Folder parentFolder = folderRepository.findById(file.getParentId())
-                .orElseThrow(() -> new ResourceAccessException("Folder not found"));
-        parentFolder.getFiles().removeIf(f -> f.getId().equals(fileId));
-
-        folderRepository.save(parentFolder);
+        if (file.getParentId() != null) {
+            Folder parentFolder = folderRepository.findById(file.getParentId())
+                    .orElseThrow(() -> new ResourceAccessException("Folder not found"));
+            parentFolder.getFiles().removeIf(f -> f.getId().equals(file.getId()));
+            folderRepository.save(parentFolder);
+        } else {
+            Project project = projectRepository.findById(projectID)
+                    .orElseThrow(() -> new ResourceAccessException("Project not found"));
+            project.getRootFiles().removeIf(f -> f.getId().equals(file.getId()));
+            projectRepository.save(project);
+        }
         fileRepository.delete(file);
-
         return projectID;
     }
 

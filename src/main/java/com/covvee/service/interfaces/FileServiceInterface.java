@@ -1,6 +1,7 @@
 package com.covvee.service.interfaces;
 
 import com.covvee.dto.file.request.CreateFileRequest;
+import com.covvee.dto.file.request.DeleteFileDto;
 import com.covvee.dto.file.request.RenameFileDto;
 import com.covvee.dto.file.request.UpdateFileDto;
 import com.covvee.dto.file.response.FileResponse;
@@ -18,7 +19,7 @@ public interface FileServiceInterface {
 
     File renameFile(String fileId, RenameFileDto newName);
 
-    String deleteFile(String fileId);
+    String deleteFile(DeleteFileDto fileId);
 
     FileResponse moveFile(String fileId, String newParentFolderId);
 

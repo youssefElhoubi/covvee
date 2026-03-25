@@ -55,16 +55,6 @@ public class FileWebSocket {
         messagingTemplate.convertAndSend("/topic/project/"+ file.getProjectId(),"update file list");
     }
 
-    @MessageMapping("/delete/{id}")
-    @SendTo("/topic/delete/{id}")
-    @PreAuthorize("@projectFileSecurity.ownFile(#id,principal)")
-    public void deleteFile(
-            @DestinationVariable String id,
-            @AuthenticationPrincipal AppUserDetails userDetails) {
-        String projectId = fileService.deleteFile(id);
-        messagingTemplate.convertAndSend("/topic/project/"+ projectId,"update file list");
-    }
-
     @MessageMapping("/move/{id}")
     @SendTo("/topic/move/{id}")
     @PreAuthorize("@projectFileSecurity.ownFile(#id, principal)")

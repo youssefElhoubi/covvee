@@ -39,7 +39,7 @@ public class FileController {
 
         // 1. Pass BOTH IDs to the service to safely clean up MongoDB.
         // The service returns the projectId, so we save it right here!
-        String projectId = fileService.deleteFile(deleteRequest.getFileId());
+        String projectId = fileService.deleteFile(deleteRequest);
 
         // 2. Fetch the updated tree and broadcast it to the WebSocket
         messagingTemplate.convertAndSend("/topic/project/" + projectId, projectService.getProject(projectId));
