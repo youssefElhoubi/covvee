@@ -39,7 +39,7 @@ public class FileWebSocket {
     }
 
     @MessageMapping("/request/{id}")
-    @SendTo("/topic/file/{id}")
+    @SendTo("/topic/data/{id}")
     public FileResponse requestFile(@DestinationVariable String id) {
         return fileService.getFileById(id);
     }
