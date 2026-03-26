@@ -41,6 +41,8 @@ public class ExecutionService implements ExecutionInterface {
 
             // 3. Now 'tempDir' is a perfect copy of the project. Execute it!
             // Notice we are returning the actual result here instead of null
+            ExecutionResult result = dockerService.execute(tempDir, project.getLanguage());
+
             return dockerService.execute(tempDir, project.getLanguage());
 
         } finally {

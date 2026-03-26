@@ -27,16 +27,14 @@ public class DockerService {
         // 1. Configure the Container
         HostConfig hostConfig = new HostConfig()
                 .withBinds(new Bind(hostSourcePath.toAbsolutePath().toString(), new Volume("/app"))) // Mount folder
-                .withMemory(128 * 1024 * 1024L) // Limit RAM to 128MB (Safety!)
-                .withCpuQuota(50000L) // Limit CPU to 0.5 cores
-                .withNetworkMode("none"); // Disable Internet (Security!)
-
+                .withMemory(128 * 1024 * 1024L) // Limit RAM to 128MB
+                .withCpuQuota(50000L); // Limit CPU to 0.5 cores
         try {
             // 2. Create Container
             CreateContainerResponse container = dockerClient.createContainerCmd(image)
                     .withHostConfig(hostConfig)
                     .withWorkingDir("/app") // Run commands inside the mounted folder
-                    .withCmd(getCommand(language, entryPoint)) // e.g., ["python", "main.py"]
+                    .withCmd(getCommand(language, entryPoint))
                     .withAttachStdout(true)
                     .withAttachStderr(true)
                     .exec();
@@ -46,14 +44,12 @@ public class DockerService {
             // 3. Start Container
             dockerClient.startContainerCmd(containerId).exec();
 
-            // 4. Wait for it to finish (Max 10 seconds timeout)
-            // This blocks the thread until execution is done.
             WaitContainerResultCallback resultCallback = new WaitContainerResultCallback();
             dockerClient.waitContainerCmd(containerId).exec(resultCallback);
 
             boolean completed = false;
             try {
-                completed = resultCallback.awaitCompletion(10, TimeUnit.SECONDS);
+                completed = resultCallback.awaitCompletion(60, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 // Thread interrupted
             }
@@ -66,7 +62,7 @@ public class DockerService {
                 dockerClient.killContainerCmd(containerId).exec();
                 return ExecutionResult.builder()
                         .output(logs)
-                        .error("Execution Timed Out (Max 10s)")
+                        .error("Execution Timed Out (Max 60s)") // Updated error message
                         .isTimeout(true)
                         .build();
             }
@@ -121,9 +117,19 @@ public class DockerService {
 
     private String[] getCommand(Language lang, String entryPoint) {
         return switch (lang) {
-            case PYTHON -> new String[]{"python", entryPoint};
-            case JAVASCRIPT -> new String[]{"node", entryPoint};
-            case JAVA -> new String[]{"java", entryPoint}; // Simplified for single-file java
+
+            case PYTHON ->
+                    new String[]{"sh", "-c", "python " + entryPoint};
+
+            case JAVASCRIPT ->
+                // 🔥 Runs npm install to download their dependencies, then executes the file
+                    new String[]{"sh", "-c", "npm install && node " + entryPoint};
+
+            case JAVA -> {
+                String className = entryPoint.replace(".java", "");
+                yield new String[]{"sh", "-c", "javac $(find . -name \"*.java\") && java " + className};
+            }
+
             default -> new String[]{};
         };
     }
