@@ -29,7 +29,7 @@ public interface ProjectRepository extends MongoRepository<Project,String> {
     })
     List<LanguageStatResponse> getLanguageStatistics();
 
-    Page<Project> findByLanguageOrName(Language language, String name,Pageable pageable);
+    Page<Project> findByName( String name,Pageable pageable);
 
     Map<String, Project> findAllByUserId(String userId);
 }

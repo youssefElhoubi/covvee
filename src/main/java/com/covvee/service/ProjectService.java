@@ -81,9 +81,9 @@ public class ProjectService implements ProjectServiceInterface {
     }
 
     @Override
-    public Page<Project> ProjectSearch(Language language, String name, int page, int size) {
+    public Page<ProjectSummaryResponse> ProjectSearch( String name, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-
-        return null;
+        Page<Project> project = projectRepository.findByName( name, pageable);
+        return project.map(projectMapper::toSummary);
     }
 }

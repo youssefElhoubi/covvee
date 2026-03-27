@@ -8,6 +8,7 @@ import com.covvee.security.AppUserDetails;
 import com.covvee.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,6 +46,12 @@ public class ProjectController {
     @GetMapping("/{id}")
     public ResponseEntity<ProjectDetailResponse> getProject(@PathVariable String id) {
         return ResponseEntity.ok(projectService.getProject(id));
+    }
+    @GetMapping("/search/{query}")
+    public ResponseEntity<Page<ProjectSummaryResponse>> searchProjects(@PathVariable String query,
+                                                                       @RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(projectService.ProjectSearch(query, page, size));
     }
 
     @DeleteMapping("/{id}")
