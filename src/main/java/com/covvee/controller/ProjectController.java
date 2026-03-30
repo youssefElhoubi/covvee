@@ -48,7 +48,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getProject(id));
     }
     @GetMapping("/search/{query}")
-    public ResponseEntity<Page<ProjectSummaryResponse>> searchProjects(@PathVariable String query,
+    public ResponseEntity<Page<ProjectDetailResponse>> searchProjects(@PathVariable String query,
                                                                        @RequestParam(defaultValue = "0") int page,
                                                                        @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(projectService.ProjectSearch(query, page, size));

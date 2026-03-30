@@ -17,7 +17,7 @@ public interface ProjectServiceInterface {
     ProjectDetailResponse getProject(String id);
     List<ProjectDetailResponse> allProjects();
     List<ProjectDetailResponse> userProjects(User user);
-    Page<ProjectSummaryResponse> ProjectSearch( String name, int page, int size);
+    Page<ProjectDetailResponse> ProjectSearch( String name, int page, int size);
 
 
 }
