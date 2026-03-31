@@ -4,10 +4,12 @@ import com.covvee.dto.ExecutionResult;
 import com.covvee.enums.Language;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.command.WaitContainerResultCallback;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Volume;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,22 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class DockerService {
     private final DockerClient dockerClient;
+    @PostConstruct
+    public void init() {
+        try {
+            dockerClient.pullImageCmd("node:18-alpine")
+                    .exec(new PullImageResultCallback())
+                    .awaitCompletion();
+            dockerClient.pullImageCmd("python:3.9-slim")
+                    .exec(new PullImageResultCallback())
+                    .awaitCompletion();
+            dockerClient.pullImageCmd("openjdk:17-slim")
+                    .exec(new PullImageResultCallback())
+                    .awaitCompletion();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
     public ExecutionResult execute(Path hostSourcePath, Language language) {
 
