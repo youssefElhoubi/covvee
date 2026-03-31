@@ -11,6 +11,7 @@ import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Volume;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
@@ -22,14 +23,16 @@ public class DockerService {
     private final DockerClient dockerClient;
     @PostConstruct
     public void init() {
+
+        // Wrap each pull in its own try-catch so one failure doesn't stop the others
+        pullImageSafely("node:18-alpine");
+        pullImageSafely("python:3.9-slim");
+        pullImageSafely("eclipse-temurin:17-jdk-alpine");
+    }
+
+    private void pullImageSafely(String imageTag) {
         try {
-            dockerClient.pullImageCmd("node:18-alpine")
-                    .exec(new PullImageResultCallback())
-                    .awaitCompletion();
-            dockerClient.pullImageCmd("python:3.9-slim")
-                    .exec(new PullImageResultCallback())
-                    .awaitCompletion();
-            dockerClient.pullImageCmd("openjdk:17-slim")
+            dockerClient.pullImageCmd(imageTag)
                     .exec(new PullImageResultCallback())
                     .awaitCompletion();
         } catch (InterruptedException e) {
@@ -40,8 +43,7 @@ public class DockerService {
     public ExecutionResult execute(Path hostSourcePath, Language language) {
 
         String image = getImageForLanguage(language);
-        String entryPoint = getEntryPointForLanguage(language); // e.g., "main.py" or "index.js"
-
+        String entryPoint = getEntryPointForLanguage(language);
         // 1. Configure the Container
         HostConfig hostConfig = new HostConfig()
                 .withBinds(new Bind(hostSourcePath.toAbsolutePath().toString(), new Volume("/app"))) // Mount folder
@@ -118,7 +120,7 @@ public class DockerService {
         return switch (language) {
             case PYTHON -> "python:3.9-slim"; // Lightweight Python
             case JAVASCRIPT -> "node:18-alpine"; // Lightweight Node
-            case JAVA -> "openjdk:17-slim";
+            case JAVA -> "eclipse-temurin:17-jdk-alpine";
             default -> throw new IllegalArgumentException("Unsupported language");
         };
     }
