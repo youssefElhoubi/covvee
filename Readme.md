@@ -41,6 +41,7 @@ Unlike traditional SQL databases, Covvee uses **MongoDB** to handle the recursiv
 * **Security:** Spring Security + JWT (Access & Refresh Tokens)
 * **Execution:** Docker (via Docker Java API)
 * **Validation:** Jakarta Validation (Hibernate Validator)
+
 * **Mapping:** MapStruct
 
 ### Frontend (Planned)
